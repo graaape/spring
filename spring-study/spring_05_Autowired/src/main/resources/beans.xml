@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd">
+    <context:annotation-config/>
+    <bean id="cat" class="com.kuang.pojo.Cat"/>
+    <bean id="dog" class="com.kuang.pojo.Dog"/>
+    <bean id="people" class="com.kuang.pojo.People"/>
+
+<!--    <bean id="cat" class="com.kuang.pojo.Cat"/>-->
+<!--    <bean id="dog" class="com.kuang.pojo.Dog"/>-->
+<!--&lt;!&ndash;-->
+<!--byName:会自动在容器上下文中，查找和自己对象set方法后的值对应的bean id-->
+<!--&ndash;&gt;-->
+<!--    <bean id="people" class="com.kuang.pojo.People" autowire="byName">-->
+<!--        <property name="name" value="小明"/>-->
+<!--&lt;!&ndash;        <property name="cat" ref="cat"/>&ndash;&gt;-->
+<!--&lt;!&ndash;        <property name="dog" ref="dog"/>&ndash;&gt;-->
+<!--    </bean>-->
+</beans>

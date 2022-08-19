@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="user" class="com.kuang.pojo.User">
+        <property name="name" value="小明"/>
+    </bean>
+    <!--
+    1.下标赋值
+    -->
+<!--    <bean id="user1" class="com.kuang.pojo.User">-->
+<!--        <constructor-arg index="0" value="小红"/>-->
+<!--    </bean>-->
+<!--   2.通过类型创建
+       不建议使用
+ -->
+<!--    <bean id="user1" class="com.kuang.pojo.User">-->
+<!--        <constructor-arg type="java.lang.String" value="小红"/>-->
+<!--    </bean>-->
+<!--    3.直接通过参数名-->
+    <bean id="user1" class="com.kuang.pojo.User">
+        <constructor-arg name="name" value="小红"/>
+    </bean>
+    <bean id="userT" class="com.kuang.pojo.UserT" name="user2 u2,u3;u4"/>
+    <alias name="user" alias="userNew"/>
+</beans>
