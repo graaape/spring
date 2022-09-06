@@ -20,6 +20,8 @@
         <module>spring_07_appconfig</module>
         <module>spring_08_proxy</module>
         <module>spring_09_aop</module>
+        <module>spring_10_mybatis</module>
+        <module>spring_11_transaction</module>
     </modules>
 
     <properties>
