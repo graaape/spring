@@ -268,3 +268,115 @@ public class MyTest {
 - 方式1：使用Spring的API接口。
 - 方式2：自定义类实现AOP（需要定义切面）。
 - 方式3：使用注解实现。
+## 整合Mybatis
+### Mybatis-spring
+1. 编写数据源配置
+	```xml
+	<!--DataSource:使用spring的数据源替换Mybatis的配置-->  
+	 <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
+		 <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>  
+		 <property name="url" value="jdbc:mysql://localhost:3306/mybatis?useSSL=false&amp;userUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=Asia/Shanghai"/>  
+		 <property name="username" value="root"/>  
+		 <property name="password" value="123456"/>  
+	 </bean>
+	```
+2. sqlSessionFactory
+	```xml
+	<!--sqlSessionFactory-->  
+	  <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">  
+		 <property name="dataSource" ref="dataSource"/>  
+	<!-- 绑定Mybatis配置文件-->  
+		 <property name="configLocation" value="classpath:mybatis_config.xml"/>  
+		 <property name="mapperLocations" value="classpath:UserMapper.xml"/>  
+	 </bean>
+	```
+3. sqlSessionTemplate
+	```xml
+	 <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">  
+	<!-- 只能使用构造器注入sqlSessionFactory-->  
+	  <constructor-arg index="0" ref="sqlSessionFactory"/>  
+	 </bean>
+	```
+4. 给Mapper接口加实现类
+	方式1：
+	```java
+	public class UserMapperImpl implements UserMapper{  
+    private SqlSessionTemplate sqlSession;  
+  
+	 public void setSqlSession(SqlSessionTemplate sqlSession) {  
+        this.sqlSession = sqlSession;  
+	  }  
+  
+    @Override  
+	  public List<User> selectUser() {  
+        UserMapper mapper = sqlSession.getMapper(UserMapper.class);  
+	 return mapper.selectUser();  
+	  }  
+	}
+	```
+	方式2：
+	```java
+	public class UserMapperImpl2 extends SqlSessionDaoSupport implements UserMapper {  
+    @Override  
+	  public List<User> selectUser() {  
+        SqlSession sqlSession = getSqlSession();  
+		UserMapper mapper = sqlSession.getMapper(UserMapper.class);  
+		return mapper.selectUser();  
+	  }  
+	}
+	```
+5. 将写的实现类注入到Spring中
+		方式1：
+	```xml
+	<bean id="userMapper" class="com.kuang.mapper.UserMapperImpl">  
+	  <property name="sqlSession" ref="sqlSession"/>  
+	</bean>
+	```
+	方式2：
+	```xml
+	<bean id="userMapper2" class="com.kuang.mapper.UserMapperImpl2">  
+	 <property name="sqlSessionFactory" ref="sqlSessionFactory"/>  
+	</bean>
+	```
+6. 测试
+	```java
+	//测试1
+	@Test  
+	  public void test() throws IOException {  
+	  ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");  
+	  UserMapper userMapper = context.getBean("userMapper", UserMapper.class);  
+	  List<User> users = userMapper.selectUser();  
+	  for (User user : users) {  
+            System.out.println(user);  
+	  }  
+    }
+	```
+	## 声明式事务
+	### 事务ACID原则：
+	- 原子性
+	- 一致性
+	- 隔离性
+	- 持久性
+	### spring中 的事务管理
+	- 声明式事务：AOP
+		```java
+		<!-- 结合AOP实现事务的织入-->  
+		<!-- 配置事务通知-->  
+		 <tx:advice id="txAdvice" transaction-manager="transactionManager">  
+		<!-- 给哪些方法配置事务-->  
+		<!-- 配置事务的传播特性:propagation-->  
+		<tx:attributes>  
+		 <tx:method name="add" propagation="REQUIRED"/>  
+		 <tx:method name="delete" propagation="REQUIRED"/>  
+		 <tx:method name="update" propagation="REQUIRED"/>  
+		 <tx:method name="query" read-only="true"/>  
+		 <tx:method name="*" propagation="REQUIRED"/>  
+		</tx:attributes>  
+		</tx:advice>  
+		<!-- 配置事务切入-->  
+	  <aop:config>  
+		 <aop:pointcut id="txPointCut" expression="execution(* com.kuang.mapper.*.*(..))"/>  
+		 <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointCut"/>  
+		</aop:config>
+		```
+	- 编程式事务：需要在代码中进行事务的管理
