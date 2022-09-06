@@ -27,9 +27,7 @@
 ## Spring配置
 ### 别名
 ```xml
-<!--
-eg.
--->
+<!--eg.-->
 <alias name="user" alias="userNew"/>
 ```
 - 如果添加了别名，就可以用别名来获取这个对象。
